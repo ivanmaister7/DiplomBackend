@@ -1,6 +1,6 @@
 package com.example.diplombackend.security.services;
 
-import com.example.diplombackend.models.User;
+import com.example.diplombackend.model.User;
 import com.example.diplombackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

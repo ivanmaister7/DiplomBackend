@@ -1,4 +1,4 @@
-package com.example.diplombackend.models;
+package com.example.diplombackend.model;
 
 public enum ERole {
   ROLE_USER,

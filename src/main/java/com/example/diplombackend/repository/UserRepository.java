@@ -2,7 +2,7 @@ package com.example.diplombackend.repository;
 
 import java.util.Optional;
 
-import com.example.diplombackend.models.User;
+import com.example.diplombackend.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

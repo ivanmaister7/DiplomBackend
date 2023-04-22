@@ -1,8 +1,8 @@
-package com.example.diplombackend.controllers;
+package com.example.diplombackend.controller;
 
-import com.example.diplombackend.models.ERole;
-import com.example.diplombackend.models.Role;
-import com.example.diplombackend.models.User;
+import com.example.diplombackend.model.ERole;
+import com.example.diplombackend.model.Role;
+import com.example.diplombackend.model.User;
 import com.example.diplombackend.payload.request.LoginRequest;
 import com.example.diplombackend.payload.request.SignupRequest;
 import com.example.diplombackend.payload.response.JwtResponse;
@@ -96,22 +96,21 @@ public class AuthController {
         } else {
             strRoles.forEach(role -> {
                 switch (role) {
-                    case "admin":
+                    case "admin" -> {
                         Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(adminRole);
-
-                        break;
-                    case "mod":
+                    }
+                    case "mod" -> {
                         Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(modRole);
-
-                        break;
-                    default:
+                    }
+                    default -> {
                         Role userRole = roleRepository.findByName(ERole.ROLE_USER)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(userRole);
+                    }
                 }
             });
         }
