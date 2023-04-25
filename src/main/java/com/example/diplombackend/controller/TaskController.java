@@ -25,8 +25,9 @@ public class TaskController {
                                                  @PathVariable String id) {
         task.setIsDone(userInput.contains("line"));
 
+        int count = 0;
         for (Figure f : geometryParserService.parseText(userInput)) {
-            System.out.println(f);
+            System.out.println(++count + ". " + f);
         }
 
         return ResponseEntity.ok("");
