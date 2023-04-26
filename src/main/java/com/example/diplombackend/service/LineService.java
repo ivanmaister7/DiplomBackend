@@ -3,7 +3,7 @@ package com.example.diplombackend.service;
 import com.example.diplombackend.model.figures.Figure;
 import com.example.diplombackend.model.figures.Line.*;
 import com.example.diplombackend.model.figures.Point.Point;
-import com.example.diplombackend.model.figures.Point.PointType;
+import com.example.diplombackend.model.figures.Round.Circle;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,8 +25,7 @@ public class LineService {
             ((SingleLine) line).setB((Point) context.stream()
                     .filter(e -> e instanceof Point && e.getName().equals(B))
                     .findFirst()
-                    .orElse(context.get(0))); //TODO: remove in future and back previous version
-//                    .orElseThrow());
+                    .orElseThrow());
         } else if (type.equals(LineType.PERPENDICULAR)) {
             line = new PerpendicularLine();
             String base = last(temp).replaceAll("\\)","");
@@ -41,6 +40,39 @@ public class LineService {
                     .filter(e -> e instanceof Line && e.getName().equals(base))
                     .findFirst()
                     .orElseThrow());
+        } else if (type.equals(LineType.PERPENDICULAR_BISECTOR)) {
+            line = new PerpendicularBisectorLine();
+            String base = last(temp).replaceAll("\\)","");
+            ((PerpendicularBisectorLine) line).setB((Point) context.stream()
+                    .filter(e -> e instanceof Point && e.getName().equals(base))
+                    .findFirst()
+                    .orElseThrow());
+        } else if (type.equals(LineType.ANGLE_BISECTOR)) {
+            line = new AngleBisectorLine();
+            String B = prelast(temp);
+            String C = last(temp).replaceAll("\\)","");
+            ((AngleBisectorLine) line).setB((Point) context.stream()
+                    .filter(e -> e instanceof Point && e.getName().equals(B))
+                    .findFirst()
+                    .orElseThrow());
+            ((AngleBisectorLine) line).setC((Point) context.stream()
+                    .filter(e -> e instanceof Point && e.getName().equals(C))
+                    .findFirst()
+                    .orElseThrow());
+        } else if (type.equals(LineType.TANGENT)) {
+            line = new Tangent();
+            String circle = last(temp).replaceAll("\\)","");
+            ((Tangent) line).setCircle(context.stream()
+                    .filter(e -> e instanceof Circle && e.getName().equals(circle))
+                    .findFirst()
+                    .orElseThrow());
+        } else if (type.equals(LineType.POLAR)) {
+            line = new Polar();
+            String circle = last(temp).replaceAll("\\)","");
+            ((Polar) line).setCircle(context.stream()
+                    .filter(e -> e instanceof Circle && e.getName().equals(circle))
+                    .findFirst()
+                    .orElseThrow());
         }
 
         line.setName(last(TextParser.split(first(elements))));
@@ -51,8 +83,6 @@ public class LineService {
                 .findFirst()
                 .orElseThrow());
 
-
-
         return line;
     }
 
@@ -61,10 +91,18 @@ public class LineService {
         Figure figure = context.stream()
                 .filter(e -> e.getName().equals(name))
                 .findFirst()
-                .orElse(context.get(0)); //TODO: remove in future and back previous version
-                //.orElseThrow();
-        return figure instanceof Point ? LineType.SINGLE :
-                first(input).contains("peddicular") &&
-                        figure instanceof Line ? LineType.PERPENDICULAR : LineType.PARALLEL;
+                .orElseThrow();
+        return first(input).contains("Line") &&
+                figure instanceof Point ? LineType.SINGLE :
+                first(input).contains("PerpendicularBisector") &&
+                        figure instanceof Point ? LineType.PERPENDICULAR_BISECTOR :
+                        first(input).contains("AngleBisector") &&
+                                figure instanceof Point ? LineType.ANGLE_BISECTOR :
+                                first(input).contains("PerpendicularLine") &&
+                                        figure instanceof Line ? LineType.PERPENDICULAR :
+                                        first(input).contains("Tangent") &&
+                                                figure instanceof Circle ? LineType.TANGENT :
+                                                first(input).contains("Polar") &&
+                                                        figure instanceof Circle ? LineType.POLAR: LineType.PARALLEL;
     }
 }

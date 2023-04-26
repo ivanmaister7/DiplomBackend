@@ -10,7 +10,9 @@ public class PerpendicularLine extends Line implements Figure {
 
     @Override
     public String toString() {
-        return super.toString().substring(0, super.toString().length() - 1) +
+        return super.toString()
+                .substring(0, super.toString().length() - 1)
+                .replaceAll("Line","PerpendicularLine") +
                 ", base=" + base +
                 ')';
     }

@@ -4,6 +4,7 @@ import com.example.diplombackend.model.figures.Figure;
 import com.example.diplombackend.model.figures.Line.*;
 import com.example.diplombackend.model.figures.Point.Point;
 import com.example.diplombackend.model.figures.Point.PointType;
+import com.example.diplombackend.model.figures.Round.Circle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,8 @@ public class GeometryParserService {
     PolylineService polylineService;
     @Autowired
     VectorService vectorService;
+    @Autowired
+    CircleService circleService;
     public List<Figure> parseText(String input) {
         List<String> figuresText = TextParser.splitByRegex(input, "\n");
         List<Figure> figures = new ArrayList<>();
@@ -48,6 +51,9 @@ public class GeometryParserService {
             } else if (line.contains("vector")) {
                 Vector vector = vectorService.createVectorFrom(line, figures);
                 figures.add(vector.getClass().cast(vector));
+            } else if (line.contains("circle")) {
+                Circle circle = circleService.createCircleFrom(line, figures);
+                figures.add(circle.getClass().cast(circle));
             }
         }
         System.out.println("----------------------------");

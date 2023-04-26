@@ -9,7 +9,9 @@ public class MidPoint extends Point {
 
     @Override
     public String toString() {
-        return super.toString().substring(0, super.toString().length() - 1) +
+        return super.toString()
+                .substring(0, super.toString().length() - 1)
+                .replaceAll("Point","MidPoint") +
                 ", A=" + A +
                 ", B=" + B +
                 ')';
