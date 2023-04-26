@@ -19,6 +19,7 @@ public class PointService {
         PointType type = checkType(input);
         // TODO: Point(Circle(E, 10)) check and implement
         // TODO: Translate(H, u) check and implement
+        // TODO: Point(xAxis) check and implement
         if (type.equals(PointType.SINGLE)) {
             point = new Point();
         } else if (type.equals(PointType.MIDPOINT)) {
@@ -50,7 +51,7 @@ public class PointService {
         return point;
     }
 
-    PointType checkType(String input) {
+    public PointType checkType(String input) {
         return input.contains("Midpoint") ? PointType.MIDPOINT :
                 input.contains("PointIn") ? PointType.POINTIN : PointType.SINGLE;
     }

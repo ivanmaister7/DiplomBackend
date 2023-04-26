@@ -4,8 +4,8 @@ import com.example.diplombackend.model.figures.Figure;
 import lombok.Data;
 
 @Data
-public class Ray extends Line implements Figure {
-    public Ray(Line ray) {
+public class Ray extends SingleLine implements Figure {
+    public Ray(SingleLine ray) {
         setEquation(ray.getEquation());
         setName(ray.getName());
         setA(ray.getA());

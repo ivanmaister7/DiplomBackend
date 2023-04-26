@@ -9,8 +9,8 @@ public class MidPoint extends Point {
 
     @Override
     public String toString() {
-        return super.toString().replaceAll("\\)", ", ") +
-                "A=" + A +
+        return super.toString().substring(0, super.toString().length() - 1) +
+                ", A=" + A +
                 ", B=" + B +
                 ')';
     }

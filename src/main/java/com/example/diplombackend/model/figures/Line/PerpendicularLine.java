@@ -1,16 +1,17 @@
-package com.example.diplombackend.model.figures.Point;
+package com.example.diplombackend.model.figures.Line;
 
 import com.example.diplombackend.model.figures.Figure;
+import com.example.diplombackend.model.figures.Point.Point;
 import lombok.Data;
 
 @Data
-public class PointIn extends Point {
-    private Figure owner;
+public class PerpendicularLine extends Line implements Figure {
+    private Line base;
 
     @Override
     public String toString() {
         return super.toString().substring(0, super.toString().length() - 1) +
-                ", owner=" + owner +
+                ", base=" + base +
                 ')';
     }
 }

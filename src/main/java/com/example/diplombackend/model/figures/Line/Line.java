@@ -9,5 +9,4 @@ public class Line implements Figure {
     private String name;
     private String equation;
     private Point A;
-    private Point B;
 }
