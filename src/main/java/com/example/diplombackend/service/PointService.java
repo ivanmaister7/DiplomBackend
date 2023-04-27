@@ -36,7 +36,7 @@ public class PointService {
                     .findFirst()
                     .orElseThrow());
 
-        } else if (type.equals(PointType.POINTIN)) {
+        } else if (type.equals(PointType.POINT_IN)) {
             point = new PointIn();
             //String name = last(TextParser.splitByRegex(elements.get(1), "\\(")).replaceAll("\\)","");
             String name = "A"; // TODO: delete after implement all figures
@@ -53,6 +53,6 @@ public class PointService {
 
     public PointType checkType(String input) {
         return input.contains("Midpoint") ? PointType.MIDPOINT :
-                input.contains("PointIn") ? PointType.POINTIN : PointType.SINGLE;
+                input.contains("PointIn") ? PointType.POINT_IN : PointType.SINGLE;
     }
 }
