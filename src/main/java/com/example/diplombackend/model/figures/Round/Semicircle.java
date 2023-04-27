@@ -4,25 +4,27 @@ import com.example.diplombackend.model.figures.Figure;
 import com.example.diplombackend.model.figures.Point.Point;
 import lombok.Data;
 
-import static com.example.diplombackend.ListExtension.*;
+import static com.example.diplombackend.ListExtension.last;
 import static com.example.diplombackend.service.TextParser.split;
 
 @Data
-public class Circle implements Figure {
+public class Semicircle implements Figure {
     private String name;
-    private String equation;
-    private Point center;
+    private double length;
+    private Point start;
+    private Point end;
 
     public double getRadius() {
-        return Math.sqrt(Double.parseDouble(last(split(equation))));
+        return length / 6.28;
     }
 
     @Override
     public String toString() {
-        return "Circle(" +
+        return "Semicircle(" +
                 "name='" + name + '\'' +
-                ", equation='" + equation + '\'' +
-                ", center=" + center +
+                ", length=" + length +
+                ", start=" + start +
+                ", end=" + end +
                 ", radius=" + getRadius() +
                 ')';
     }

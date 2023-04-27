@@ -5,6 +5,7 @@ import com.example.diplombackend.model.figures.Line.*;
 import com.example.diplombackend.model.figures.Point.Point;
 import com.example.diplombackend.model.figures.Polygon.Polygon;
 import com.example.diplombackend.model.figures.Round.Circle;
+import com.example.diplombackend.model.figures.Round.Semicircle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,7 @@ public class GeometryParserService {
         List<String> figuresText = TextParser.splitByRegex(input, "\n");
         List<Figure> figures = new ArrayList<>();
         int count = 0;
+        System.out.println(figuresText.size() - 1);
         figuresText
                 .stream()
                 .filter(e -> e.contains("point"))
@@ -61,6 +63,9 @@ public class GeometryParserService {
             } else if (line.contains("vector")) {
                 Vector vector = vectorService.createVectorFrom(line, figures);
                 figures.add(vector.getClass().cast(vector));
+            } else if (line.contains("Semicircle")) {
+                Semicircle semicircle = circleService.createSemicircleFrom(line, figures);
+                figures.add(semicircle.getClass().cast(semicircle));
             } else if (line.contains("circle")) {
                 Circle circle = circleService.createCircleFrom(line, figures);
                 figures.add(circle.getClass().cast(circle));
