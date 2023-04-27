@@ -1,5 +1,6 @@
 package com.example.diplombackend.service;
 
+import com.example.diplombackend.model.figures.Angle.Angle;
 import com.example.diplombackend.model.figures.Figure;
 import com.example.diplombackend.model.figures.Line.*;
 import com.example.diplombackend.model.figures.Point.Point;
@@ -29,6 +30,8 @@ public class GeometryParserService {
     VectorService vectorService;
     @Autowired
     CircleService circleService;
+    @Autowired
+    AngleService angleService;
     @Autowired
     PolygonService polygonService;
     public List<Figure> parseText(String input) {
@@ -72,6 +75,9 @@ public class GeometryParserService {
             } else if (line.contains("Polygon")) {
                 Polygon polygon = polygonService.createPolygonFrom(line, figures);
                 figures.add(polygon.getClass().cast(polygon));
+            } else if (line.contains("angle")) {
+                Angle angle = angleService.createAngleFrom(line, figures);
+                figures.add(angle.getClass().cast(angle));
             }
         }
         segmentService.optimizeAll(figures);
