@@ -19,7 +19,7 @@ public class RayService {
     @Autowired
     LineService lineService;
     public Ray createRayFrom(String input, List<Figure> context) {
-        SingleLine ray = (SingleLine) lineService.createLineFrom(input, context);
+        SingleLine ray = (SingleLine) lineService.createLineFrom(input, context).get();
         return new Ray(ray);
     }
 }

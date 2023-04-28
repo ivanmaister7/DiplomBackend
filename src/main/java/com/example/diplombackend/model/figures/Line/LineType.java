@@ -7,5 +7,6 @@ public enum LineType {
     PERPENDICULAR_BISECTOR,
     ANGLE_BISECTOR,
     TANGENT,
-    POLAR
+    POLAR,
+    UNSUPPORTED
 }

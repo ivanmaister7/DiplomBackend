@@ -33,7 +33,6 @@ public class SegmentService {
                     .filter(e -> e instanceof Polygon && e.getName().equals(base))
                     .findFirst()
                     .orElseThrow());
-            //TODO: implement adding SegmentIn points to base points list.
         }
         segment.setName(last(split(first(elements))));
         segment.setLength(Double.parseDouble(last(split(last(elements)))));

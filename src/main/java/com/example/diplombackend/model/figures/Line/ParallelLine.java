@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class ParallelLine extends Line implements Figure {
-    private Line base;
+    private Figure base;
 
     @Override
     public String toString() {

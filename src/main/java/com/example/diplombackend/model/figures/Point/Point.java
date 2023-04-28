@@ -9,4 +9,3 @@ public class Point implements Figure {
     private double coordinate1;
     private double coordinate2;
 }
-//TODO: implement intersect

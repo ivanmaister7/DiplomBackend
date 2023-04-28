@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,28 +37,33 @@ public class GeometryParserService {
     @Autowired
     PolygonService polygonService;
     public List<Figure> parseText(String input) {
-        List<String> figuresText = TextParser.splitByRegex(input, "\n");
+        List<String> figuresText = new ArrayList<>(TextParser.splitByRegex(input, "\n"));
         List<Figure> figures = new ArrayList<>();
         int count = 0;
         System.out.println(figuresText.size() - 1);
-        figuresText
+        for (String line : figuresText) {
+            System.out.println(count++ + ". " + line);
+        }
+        List<String> pointsText = figuresText
                 .stream()
-                .filter(e -> e.contains("point"))
+                .filter(e -> e.contains(", ,") || (e.contains("Polygon") && e.contains("point")))
+                .toList();
+        pointsText
                 .forEach(line -> {
                     Point point = pointService.createPointFrom(line, figures);
                     figures.add(point.getClass().cast(point));
                 });
-        for (String line : figuresText
-                .stream()
-                .filter(e -> !e.contains("point"))
-                .toList()) {
-            System.out.println(count++ + ". " + line);
-            if (line.contains("polyline")) {
+        figuresText.removeAll(pointsText);
+        for (String line : figuresText) {
+            if (line.contains("point")) {
+                Point point = pointService.createPointFrom(line, figures);
+                figures.add(point.getClass().cast(point));
+            } else if (line.contains("polyline")) {
                 Polyline polyline = polylineService.createPolylineFrom(line, figures);
                 figures.add(polyline.getClass().cast(polyline));
             } else if (line.contains("line")) {
-                Line line1 = lineService.createLineFrom(line, figures);
-                figures.add(line1.getClass().cast(line1));
+                Optional<Line> line1 = lineService.createLineFrom(line, figures);
+                line1.ifPresent(value -> figures.add(value.getClass().cast(value)));
             } else if (line.contains("segment")) {
                 Segment segment = segmentService.createSegmentFrom(line, figures);
                 figures.add(segment.getClass().cast(segment));

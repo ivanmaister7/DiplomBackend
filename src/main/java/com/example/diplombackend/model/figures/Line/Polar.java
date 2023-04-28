@@ -1,12 +1,13 @@
 package com.example.diplombackend.model.figures.Line;
 
 import com.example.diplombackend.model.figures.Figure;
+import com.example.diplombackend.model.figures.Round.Circle;
 import lombok.Data;
 
 @Data
 public class Polar extends Line implements Figure {
-//    private Circle circle; TODO: return to circle after implementation
-    private Figure circle;
+    private Circle circle;
+//    private Figure circle;
 
     @Override
     public String toString() {

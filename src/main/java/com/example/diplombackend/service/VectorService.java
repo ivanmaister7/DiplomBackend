@@ -1,9 +1,11 @@
 package com.example.diplombackend.service;
 
 import com.example.diplombackend.model.figures.Figure;
+import com.example.diplombackend.model.figures.Line.CollinearVector;
 import com.example.diplombackend.model.figures.Line.Line;
 import com.example.diplombackend.model.figures.Line.Vector;
 import com.example.diplombackend.model.figures.Point.Point;
+import com.example.diplombackend.model.figures.Point.Translate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,21 +21,28 @@ public class VectorService {
         input = builder.toString();
 
         List<String> elements = splitByRegex(input, ", ");
-        Vector vector = new Vector();
-        vector.setName(last(TextParser.split(first(elements))));
-        vector.setEquation(last(splitByRegex(last(elements), "= ")));
         List<String> temp = elements.subList(1, lastIndex(elements));
+        Vector vector = new Vector();
         String A = last(splitByRegex(first(temp), "\\("));
         String B = last(temp).replaceAll("\\)","");
-        vector.setA((Point) context.stream()
-                .filter(e -> e instanceof Point && e.getName().equals(A))
-                .findFirst()
-                .orElseThrow());
-        vector.setB((Point) context.stream()
-                .filter(e -> e instanceof Point && e.getName().equals(B))
-                .findFirst()
-                .orElseThrow());
+        Point pointA = findByName(A, context);
+        Point pointB = findByName(B, context);
+        if (pointB.getClass().equals(Translate.class)) {
+            vector = new CollinearVector();
+            ((CollinearVector) vector).setCollinearTo(((Translate) pointB).getVector());
+        }
+        vector.setName(last(TextParser.split(first(elements))));
+        vector.setEquation(last(splitByRegex(last(elements), "= ")));
+        vector.setA(pointA);
+        vector.setB(pointB);
 
         return vector;
+    }
+
+    private Point findByName(String name, List<Figure> context) {
+        return (Point) context.stream()
+                .filter(e -> e instanceof Point && e.getName().equals(name))
+                .findFirst()
+                .orElseThrow();
     }
 }
