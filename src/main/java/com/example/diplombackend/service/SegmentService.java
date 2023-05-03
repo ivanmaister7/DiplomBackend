@@ -1,12 +1,10 @@
 package com.example.diplombackend.service;
 
 import com.example.diplombackend.model.figures.Figure;
-import com.example.diplombackend.model.figures.Line.Segment;
-import com.example.diplombackend.model.figures.Line.SegmentIn;
-import com.example.diplombackend.model.figures.Line.SegmentType;
-import com.example.diplombackend.model.figures.Point.MidPoint;
+import com.example.diplombackend.model.figures.Segment.Segment;
+import com.example.diplombackend.model.figures.Segment.SegmentIn;
+import com.example.diplombackend.model.figures.Segment.SegmentType;
 import com.example.diplombackend.model.figures.Point.Point;
-import com.example.diplombackend.model.figures.Point.PointType;
 import com.example.diplombackend.model.figures.Polygon.Polygon;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +24,7 @@ public class SegmentService {
         SegmentType type = checkType(temp);
         if (type.equals(SegmentType.SINGLE)) {
             segment = new Segment();
-        } else if (type.equals(SegmentType.SEGMENT_IN)) {
+        } else if (type.equals(SegmentType.SEGMENTIN)) {
             segment = new SegmentIn();
             String base = last(temp).replaceAll("\\)","");
             ((SegmentIn) segment).setBase((Polygon) context.stream()
@@ -50,7 +48,7 @@ public class SegmentService {
         return segment;
     }
     public SegmentType checkType(List<String> input) {
-        return input.size() == 3 ? SegmentType.SEGMENT_IN : SegmentType.SINGLE;
+        return input.size() == 3 ? SegmentType.SEGMENTIN : SegmentType.SINGLE;
     }
 
     public void optimizeAll(List<Figure> context) {

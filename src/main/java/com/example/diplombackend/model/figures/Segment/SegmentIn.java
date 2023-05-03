@@ -1,7 +1,6 @@
-package com.example.diplombackend.model.figures.Line;
+package com.example.diplombackend.model.figures.Segment;
 
 import com.example.diplombackend.model.figures.Figure;
-import com.example.diplombackend.model.figures.Point.Point;
 import com.example.diplombackend.model.figures.Polygon.Polygon;
 import lombok.Data;
 

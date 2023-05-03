@@ -1,7 +1,6 @@
 package com.example.diplombackend.service;
 
 import com.example.diplombackend.model.figures.Figure;
-import com.example.diplombackend.model.figures.Line.Polyline;
 import com.example.diplombackend.model.figures.Point.Point;
 import com.example.diplombackend.model.figures.Round.*;
 import org.springframework.stereotype.Service;
@@ -46,7 +45,7 @@ public class CircleService {
                     .filter(e -> e instanceof Point && e.getName().equals(center))
                     .findFirst()
                     .orElseThrow());
-        } else if (type.equals(CircleType.CIRCLE_R)) {
+        } else if (type.equals(CircleType.CIRCLER)) {
             circle = new CircleR();
             String center = last(splitByRegex(first(temp), "\\("));
             String R = last(temp).replaceAll( "\\)", "");
@@ -58,7 +57,7 @@ public class CircleService {
                     .filter(e -> e instanceof Point && e.getName().equals(R))
                     .findFirst()
                     .orElseThrow());
-        } else if (type.equals(CircleType.CIRCLE_BY_POINTS)) {
+        } else if (type.equals(CircleType.CIRCLEBYPOINTS)) {
             circle = new CircleByPoints();
             for (String pointName : temp) {
                 ((CircleByPoints) circle).addPoint((Point) context.stream()
@@ -81,6 +80,6 @@ public class CircleService {
                 .replaceAll("\\)","")
                 .matches("\\d{1,13}(\\.\\d*)?") ? CircleType.CIRCLE :
                 prelast(input).contains("Segment") ? CircleType.CIRCLE :
-                        input.size() == 3 ? CircleType.CIRCLE_BY_POINTS : CircleType.CIRCLE_R;
+                        input.size() == 3 ? CircleType.CIRCLEBYPOINTS : CircleType.CIRCLER;
     }
 }

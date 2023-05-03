@@ -1,11 +1,18 @@
 package com.example.diplombackend.controller;
 
 import com.example.diplombackend.model.Task;
+import com.example.diplombackend.model.description.Description;
+import com.example.diplombackend.model.description.PointDescription;
 import com.example.diplombackend.model.figures.Figure;
+import com.example.diplombackend.model.figures.Point.PointType;
+import com.example.diplombackend.service.DescriptionParserService;
 import com.example.diplombackend.service.GeometryParserService;
+import com.example.diplombackend.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -13,22 +20,24 @@ import org.springframework.web.bind.annotation.*;
 public class TaskController {
     @Autowired
     GeometryParserService geometryParserService;
-    Task task = new Task(1L,"Draw Line!", "5", false);
+    @Autowired
+    DescriptionParserService descriptionParserService;
+    @Autowired
+    TaskService taskService;
+    Task task = new Task(1L,"Draw midpoint named Mid of fixed points Start(-5,2) and End(-1,2)", "5", false);
+    Task task2 = new Task(2L,"Draw midpoint (-3,2) of random points", "5", false);
 
     @GetMapping("/info/{id}")
     public ResponseEntity<?> getTaskById(@PathVariable String id) {
-        return ResponseEntity.ok(task);
+        return ResponseEntity.ok(id.equals("1") ? task : task2);
     }
 
     @PostMapping("/check/{id}")
     public ResponseEntity<?> checkTaskIsDoneById(@RequestBody String userInput,
                                                  @PathVariable String id) {
-        task.setIsDone(userInput.contains("line"));
-
-        int count = 0;
-        for (Figure f : geometryParserService.parseText(userInput)) {
-            System.out.println(++count + ". " + f);
-        }
+        List<Figure> figures = geometryParserService.parseText(userInput);
+        List<Description> descriptions = descriptionParserService.parseFigure(figures);
+        (id.equals("1") ? task : task2).setIsDone(taskService.checkAnswerById(descriptions, id));
 
         return ResponseEntity.ok("");
     }

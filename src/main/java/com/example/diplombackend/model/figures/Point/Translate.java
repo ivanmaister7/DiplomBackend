@@ -1,8 +1,7 @@
 package com.example.diplombackend.model.figures.Point;
 
 import com.example.diplombackend.model.figures.Figure;
-import com.example.diplombackend.model.figures.Line.Line;
-import com.example.diplombackend.model.figures.Line.Vector;
+import com.example.diplombackend.model.figures.Vector.Vector;
 import lombok.Data;
 
 @Data

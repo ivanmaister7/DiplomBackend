@@ -41,14 +41,14 @@ public class LineService {
                     .filter(e -> e.getName().equals(base))
                     .findFirst()
                     .orElseThrow());
-        } else if (type.equals(LineType.PERPENDICULAR_BISECTOR)) {
+        } else if (type.equals(LineType.PERPENDICULARBISECTOR)) {
             line = new PerpendicularBisectorLine();
             String base = last(temp).replaceAll("\\)","");
             ((PerpendicularBisectorLine) line).setB((Point) context.stream()
                     .filter(e -> e instanceof Point && e.getName().equals(base))
                     .findFirst()
                     .orElseThrow());
-        } else if (type.equals(LineType.ANGLE_BISECTOR)) {
+        } else if (type.equals(LineType.ANGLEBISECTOR)) {
             line = new AngleBisectorLine();
             String B = prelast(temp);
             String C = last(temp).replaceAll("\\)","");
@@ -101,9 +101,9 @@ public class LineService {
         return first(input).contains("Line") &&
                 figure instanceof Point ? LineType.SINGLE :
                 first(input).contains("PerpendicularBisector") &&
-                        figure instanceof Point ? LineType.PERPENDICULAR_BISECTOR :
+                        figure instanceof Point ? LineType.PERPENDICULARBISECTOR :
                         first(input).contains("AngleBisector") &&
-                                figure instanceof Point ? LineType.ANGLE_BISECTOR :
+                                figure instanceof Point ? LineType.ANGLEBISECTOR :
                                 first(input).contains("PerpendicularLine") &&
                                         figure instanceof Line ? LineType.PERPENDICULAR :
                                         first(input).contains("Tangent") &&

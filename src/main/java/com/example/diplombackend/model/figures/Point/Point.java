@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 public class Point implements Figure {
     private String name;
+    private PointType type;
     private double coordinate1;
     private double coordinate2;
 }

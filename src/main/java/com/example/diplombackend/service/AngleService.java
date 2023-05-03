@@ -2,11 +2,7 @@ package com.example.diplombackend.service;
 
 import com.example.diplombackend.model.figures.Angle.Angle;
 import com.example.diplombackend.model.figures.Figure;
-import com.example.diplombackend.model.figures.Line.Segment;
-import com.example.diplombackend.model.figures.Line.SegmentIn;
-import com.example.diplombackend.model.figures.Line.SegmentType;
 import com.example.diplombackend.model.figures.Point.Point;
-import com.example.diplombackend.model.figures.Polygon.Polygon;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

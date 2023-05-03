@@ -1,4 +1,4 @@
-package com.example.diplombackend.model.figures.Line;
+package com.example.diplombackend.model.figures.Segment;
 
 import com.example.diplombackend.model.figures.Figure;
 import com.example.diplombackend.model.figures.Point.Point;

@@ -7,14 +7,14 @@ import com.example.diplombackend.model.figures.Point.Point;
 import com.example.diplombackend.model.figures.Polygon.Polygon;
 import com.example.diplombackend.model.figures.Round.Circle;
 import com.example.diplombackend.model.figures.Round.Semicircle;
+import com.example.diplombackend.model.figures.Segment.Segment;
+import com.example.diplombackend.model.figures.Vector.Vector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class GeometryParserService {
@@ -39,11 +39,11 @@ public class GeometryParserService {
     public List<Figure> parseText(String input) {
         List<String> figuresText = new ArrayList<>(TextParser.splitByRegex(input, "\n"));
         List<Figure> figures = new ArrayList<>();
-        int count = 0;
-        System.out.println(figuresText.size() - 1);
-        for (String line : figuresText) {
-            System.out.println(count++ + ". " + line);
-        }
+//        int count = 0;
+//        System.out.println(figuresText.size() - 1);
+//        for (String line : figuresText) {
+//            System.out.println(count++ + ". " + line);
+//        }
         List<String> pointsText = figuresText
                 .stream()
                 .filter(e -> e.contains(", ,") || (e.contains("Polygon") && e.contains("point")))
@@ -88,7 +88,6 @@ public class GeometryParserService {
             }
         }
         segmentService.optimizeAll(figures);
-        System.out.println("----------------------------");
         return figures;
     }
 

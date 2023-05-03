@@ -1,9 +1,8 @@
 package com.example.diplombackend.service;
 
 import com.example.diplombackend.model.figures.Figure;
-import com.example.diplombackend.model.figures.Line.CollinearVector;
-import com.example.diplombackend.model.figures.Line.Line;
-import com.example.diplombackend.model.figures.Line.Vector;
+import com.example.diplombackend.model.figures.Vector.CollinearVector;
+import com.example.diplombackend.model.figures.Vector.Vector;
 import com.example.diplombackend.model.figures.Point.Point;
 import com.example.diplombackend.model.figures.Point.Translate;
 import org.springframework.stereotype.Service;

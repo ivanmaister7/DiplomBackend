@@ -1,9 +1,9 @@
 package com.example.diplombackend.model.figures.Point;
 
 public enum PointType {
-    SINGLE,
+    POINT ,
     MIDPOINT,
-    POINT_IN,
+    POINTIN,
     INTERSECT,
     TRANSLATE
 }
