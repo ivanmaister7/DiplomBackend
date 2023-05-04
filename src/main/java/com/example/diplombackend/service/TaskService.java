@@ -62,8 +62,7 @@ public class TaskService {
             PointDescription.builder().name(null).type(PointType.POINT).coordinate1(null).coordinate2(null).build(),
             LineDescription.builder().name(null).type(LineType.SINGLELINE).equation(null).build()
     );
-    public boolean checkAnswerById(List<Description> input, String id) {
-        Long ID = Long.parseLong(id);
+    public boolean checkAnswerById(List<Description> input, Long id) {
 //        List<String> figuresText = new ArrayList<>(TextParser.splitByRegex(input, "\n"));
 //        List<Figure> figures = new ArrayList<>();
 //        List<Description> descriptions = new ArrayList<>();
@@ -114,7 +113,7 @@ public class TaskService {
 //            }
 //        }
 
-        Task task = taskRepository.findById(ID).orElseThrow();
+        Task task = taskRepository.findById(id).orElseThrow();
         List<Description> allDescription = task.getAllDescription();
 //        LineDescription(lineDescription_id=null, name=null, equation=null, type=SINGLELINE, task=null)
 //        PointDescription(pointDescription_id=null, name=null, type=POINT, coordinate1=null, coordinate2=null, task=null)
@@ -132,7 +131,7 @@ public class TaskService {
     private <T extends Description> boolean checkAnswerForType(List<Description> input, List<Description> answer, Class<T> type) {
         List<T> inputOfType = getDescriptionsOfType(input, type);
         List<T> answerOfType = getDescriptionsOfType(answer, type);
-        return checkAnswer(inputOfType, answerOfType);
+        return answerOfType.size() <= inputOfType.size() && checkAnswer(inputOfType, answerOfType);
     }
 
     public static  <T extends Description> List<T> getDescriptionsOfType(List<Description> descriptions, Class<T> type) {
@@ -164,6 +163,9 @@ public class TaskService {
             }
             count = 0;
         }
+        if (maxDescription == null){
+            return null;
+        }
         maxDescription = (T) maxDescription.getClass().getConstructor(maxDescription.getClass()).newInstance(maxDescription);
         for (Field field : description.getClass().getDeclaredFields()) {
             field.setAccessible(true);
@@ -178,12 +180,36 @@ public class TaskService {
     }
     public <T> boolean checkAnswer(List<T> userDrawDescription, List<T> answerDescription) {
         for (T description : answerDescription) {
-            if (!answerDescription.contains(findMaxDescription(description, userDrawDescription))){
+            if (!containsIgnoreId(answerDescription, findMaxDescription(description, userDrawDescription))){
                 return false;
             }
         }
         return true;
     }
+
+    @SneakyThrows
+    private <T> boolean containsIgnoreId(List<T> answerDescription, T maxDescription) {
+        if (maxDescription == null) {
+            return false;
+        }
+        int count = 0;
+        for (T description : answerDescription) {
+            for (Field field : description.getClass().getDeclaredFields()) {
+                if (field.get(description) != null && field.get(maxDescription) == null) {
+                    continue;
+                }
+                if (field.get(description) == null || field.get(description).equals(field.get(maxDescription))) {
+                    count++;
+                }
+            }
+            if (count == description.getClass().getDeclaredFields().length - 2){
+                return true;
+            }
+            count = 0;
+        }
+        return false;
+    }
+
     public <T> List<T> findCommonElements(List<T> context1, List<T> context2) {
         return context1.size() > context2.size() ?
                 findCommonElements(context2, context1) :

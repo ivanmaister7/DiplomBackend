@@ -8,5 +8,6 @@ public enum LineType {
     ANGLEBISECTORLINE,
     TANGENT,
     POLAR,
+    AXIS,
     UNSUPPORTED
 }

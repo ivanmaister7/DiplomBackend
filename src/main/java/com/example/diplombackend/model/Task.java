@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Data
@@ -25,8 +26,8 @@ public class Task {
     @Column(nullable = false)
     public String question;
 
-    @Column(nullable = false)
-    public Boolean isDone;
+//    @Column(nullable = false)
+//    public Boolean isDone;
 
     @JsonIgnore
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
@@ -35,17 +36,14 @@ public class Task {
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
     public List<LineDescription> descriptions2 = new ArrayList<>();
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
+    public Collection<UserTask> users;
+
+    @JsonIgnore
     public List<Description> getAllDescription() {
         ArrayList<Description> d = new ArrayList<>();
-        descriptions.forEach(e -> {
-            e.setTask(null);
-            e.setPointDescription_id(null);
-        });
         d.addAll(descriptions);
-        descriptions2.forEach(e -> {
-            e.setTask(null);
-            e.setLineDescription_id(null);
-        });
         d.addAll(descriptions2);
         return d;
     }
@@ -55,7 +53,6 @@ public class Task {
         return "Task{" +
                 "task_id=" + task_id +
                 ", question='" + question + '\'' +
-                ", isDone=" + isDone +
                 '}';
     }
 }

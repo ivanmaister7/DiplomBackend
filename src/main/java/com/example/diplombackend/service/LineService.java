@@ -95,7 +95,7 @@ public class LineService {
 
     public LineType checkType(List<String> input, List<Figure> context) {
         if (input.get(0).contains("FitLine")) {
-           return LineType.UNSUPPORTED;
+            return LineType.UNSUPPORTED;
         }
         String name = last(input).replaceAll("\\)","");
         Figure figure = context.stream()
@@ -122,7 +122,9 @@ public class LineService {
                 .builder()
                 .name(line.getName())
                 .equation(line.getEquation())
-                .type(LineType.valueOf(line.getClass().getSimpleName().toUpperCase()))
+                .type(line.getName().contains("Axis") ?
+                        LineType.AXIS :
+                        LineType.valueOf(line.getClass().getSimpleName().toUpperCase()))
                 .build();
     }
 
