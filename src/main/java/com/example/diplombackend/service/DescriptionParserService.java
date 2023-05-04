@@ -80,7 +80,6 @@ public class DescriptionParserService {
 //                descriptions.add(angle.getClass().cast(angle));
             }
         }
-        System.out.println("----------------------------");
         return descriptions;
     }
 

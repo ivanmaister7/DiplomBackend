@@ -1,11 +1,13 @@
 package com.example.diplombackend.service;
 
+import com.example.diplombackend.model.Task;
 import com.example.diplombackend.model.description.Description;
 import com.example.diplombackend.model.description.FigureDescription;
 import com.example.diplombackend.model.description.LineDescription;
 import com.example.diplombackend.model.description.PointDescription;
 import com.example.diplombackend.model.figures.Line.LineType;
 import com.example.diplombackend.model.figures.Point.PointType;
+import com.example.diplombackend.repository.TaskRepository;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,8 @@ public class TaskService {
     AngleService angleService;
     @Autowired
     PolygonService polygonService;
+    @Autowired
+    TaskRepository taskRepository;
     @Autowired
     @FigureDescription
     List<Description> descriptions;
@@ -110,8 +114,14 @@ public class TaskService {
 //            }
 //        }
 
+        Task task = taskRepository.findById(ID).orElseThrow();
+        List<Description> allDescription = task.getAllDescription();
+//        LineDescription(lineDescription_id=null, name=null, equation=null, type=SINGLELINE, task=null)
+//        PointDescription(pointDescription_id=null, name=null, type=POINT, coordinate1=null, coordinate2=null, task=null)
+//        PointDescription(pointDescription_id=null, name=null, type=POINT, coordinate1=null, coordinate2=null, task=null)
+
         for (Description c : descriptions) {
-            boolean checkAnswer = checkAnswerForType(input, (id.equals("3") ? answer3 : answer4), c.getClass());
+            boolean checkAnswer = checkAnswerForType(input, allDescription, c.getClass());
             if (!checkAnswer) {
                 return false;
             }
@@ -120,16 +130,18 @@ public class TaskService {
     }
 
     private <T extends Description> boolean checkAnswerForType(List<Description> input, List<Description> answer, Class<T> type) {
-        List<T> inputOfType = input.stream()
-                .filter(type::isInstance)
-                .map(type::cast)
-                .collect(Collectors.toList());
-        List<T> answerOfType = answer.stream()
-                .filter(type::isInstance)
-                .map(type::cast)
-                .collect(Collectors.toList());
+        List<T> inputOfType = getDescriptionsOfType(input, type);
+        List<T> answerOfType = getDescriptionsOfType(answer, type);
         return checkAnswer(inputOfType, answerOfType);
     }
+
+    public static  <T extends Description> List<T> getDescriptionsOfType(List<Description> descriptions, Class<T> type) {
+        return descriptions.stream()
+                .filter(type::isInstance)
+                .map(type::cast)
+                .collect(Collectors.toList());
+    }
+
 
     @SneakyThrows
     public <T> T findMaxDescription(T description, List<T> context) {
@@ -155,7 +167,8 @@ public class TaskService {
         maxDescription = (T) maxDescription.getClass().getConstructor(maxDescription.getClass()).newInstance(maxDescription);
         for (Field field : description.getClass().getDeclaredFields()) {
             field.setAccessible(true);
-            if (field.get(description) == null || !field.get(description).equals(field.get(maxDescription))) {
+            if (field.get(description) == null ||
+                    !field.get(description).equals(field.get(maxDescription))) {
                 field.set(maxDescription, null);
             } else {
                 field.set(maxDescription, field.get(description));
