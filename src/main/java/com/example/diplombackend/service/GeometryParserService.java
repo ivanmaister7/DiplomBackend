@@ -10,6 +10,7 @@ import com.example.diplombackend.model.figures.Round.Circle;
 import com.example.diplombackend.model.figures.Round.Semicircle;
 import com.example.diplombackend.model.figures.Segment.Segment;
 import com.example.diplombackend.model.figures.Vector.Vector;
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,12 +40,10 @@ public class GeometryParserService {
     PolygonService polygonService;
     public List<Figure> parseText(String input) {
         List<String> figuresText = new ArrayList<>(TextParser.splitByRegex(input, "\n"));
-        List<Figure> figures = new ArrayList<>();
-//        int count = 0;
-//        System.out.println(figuresText.size() - 1);
-//        for (String line : figuresText) {
-//            System.out.println(count++ + ". " + line);
-//        }
+        List<Figure> figures = Lists.newArrayList(
+                new SingleLine("xAxis","y = 0",new Point(), new Point()),
+                new SingleLine("yAxis","x = 0",new Point(), new Point())
+        );
         List<String> pointsText = figuresText
                 .stream()
                 .filter(e -> e.contains(", ,") || (e.contains("Polygon") && e.contains("point")))

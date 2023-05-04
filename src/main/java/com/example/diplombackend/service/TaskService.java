@@ -1,6 +1,7 @@
 package com.example.diplombackend.service;
 
 import com.example.diplombackend.model.description.Description;
+import com.example.diplombackend.model.description.FigureDescription;
 import com.example.diplombackend.model.description.LineDescription;
 import com.example.diplombackend.model.description.PointDescription;
 import com.example.diplombackend.model.figures.Line.LineType;
@@ -33,6 +34,9 @@ public class TaskService {
     AngleService angleService;
     @Autowired
     PolygonService polygonService;
+    @Autowired
+    @FigureDescription
+    List<Description> descriptions;
 
     List<PointDescription> answer = List.of(
             PointDescription.builder().name("End").type(PointType.POINT).coordinate1(-1.0).coordinate2(2.0).build(),
@@ -105,12 +109,9 @@ public class TaskService {
 //                descriptions.add(angle.getClass().cast(angle));
 //            }
 //        }
-        List<Class<? extends Description>> descriptions = List.of(
-                PointDescription.class,
-                LineDescription.class
-        );
-        for (Class<? extends Description> c :descriptions) {
-            boolean checkAnswer = checkAnswerForType(input, (id.equals("3") ? answer3 : answer4), c);
+
+        for (Description c : descriptions) {
+            boolean checkAnswer = checkAnswerForType(input, (id.equals("3") ? answer3 : answer4), c.getClass());
             if (!checkAnswer) {
                 return false;
             }
