@@ -7,7 +7,6 @@ import lombok.Data;
 @Data
 public class Polar extends Line implements Figure {
     private Circle circle;
-//    private Figure circle;
 
     @Override
     public String toString() {

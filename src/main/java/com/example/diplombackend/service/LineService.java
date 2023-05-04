@@ -1,13 +1,17 @@
 package com.example.diplombackend.service;
 
+import com.example.diplombackend.model.description.LineDescription;
 import com.example.diplombackend.model.figures.Figure;
 import com.example.diplombackend.model.figures.Line.*;
 import com.example.diplombackend.model.figures.Point.Point;
 import com.example.diplombackend.model.figures.Round.Circle;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.example.diplombackend.ListExtension.*;
 import static com.example.diplombackend.service.TextParser.splitByRegex;
@@ -20,35 +24,35 @@ public class LineService {
         Line line = null;
         LineType type = checkType(temp, context);
 
-        if (type.equals(LineType.SINGLE)) {
+        if (type.equals(LineType.SINGLELINE)) {
             line = new SingleLine();
             String B = last(temp).replaceAll("\\)","");
             ((SingleLine) line).setB((Point) context.stream()
                     .filter(e -> e instanceof Point && e.getName().equals(B))
                     .findFirst()
                     .orElseThrow());
-        } else if (type.equals(LineType.PERPENDICULAR)) {
+        } else if (type.equals(LineType.PERPENDICULARLINE)) {
             line = new PerpendicularLine();
             String base = last(temp).replaceAll("\\)","");
             ((PerpendicularLine) line).setBase((Line) context.stream()
                     .filter(e -> e instanceof Line && e.getName().equals(base))
                     .findFirst()
                     .orElseThrow());
-        } else if (type.equals(LineType.PARALLEL)) {
+        } else if (type.equals(LineType.PARALLELLINE)) {
             line = new ParallelLine();
             String base = last(temp).replaceAll("\\)","");
             ((ParallelLine) line).setBase(context.stream()
                     .filter(e -> e.getName().equals(base))
                     .findFirst()
                     .orElseThrow());
-        } else if (type.equals(LineType.PERPENDICULARBISECTOR)) {
+        } else if (type.equals(LineType.PERPENDICULARBISECTORLINE)) {
             line = new PerpendicularBisectorLine();
             String base = last(temp).replaceAll("\\)","");
             ((PerpendicularBisectorLine) line).setB((Point) context.stream()
                     .filter(e -> e instanceof Point && e.getName().equals(base))
                     .findFirst()
                     .orElseThrow());
-        } else if (type.equals(LineType.ANGLEBISECTOR)) {
+        } else if (type.equals(LineType.ANGLEBISECTORLINE)) {
             line = new AngleBisectorLine();
             String B = prelast(temp);
             String C = last(temp).replaceAll("\\)","");
@@ -99,17 +103,80 @@ public class LineService {
                 .findFirst()
                 .orElseThrow();
         return first(input).contains("Line") &&
-                figure instanceof Point ? LineType.SINGLE :
+                figure instanceof Point ? LineType.SINGLELINE :
                 first(input).contains("PerpendicularBisector") &&
-                        figure instanceof Point ? LineType.PERPENDICULARBISECTOR :
+                        figure instanceof Point ? LineType.PERPENDICULARBISECTORLINE :
                         first(input).contains("AngleBisector") &&
-                                figure instanceof Point ? LineType.ANGLEBISECTOR :
+                                figure instanceof Point ? LineType.ANGLEBISECTORLINE :
                                 first(input).contains("PerpendicularLine") &&
-                                        figure instanceof Line ? LineType.PERPENDICULAR :
+                                        figure instanceof Line ? LineType.PERPENDICULARLINE :
                                         first(input).contains("Tangent") &&
                                                 figure instanceof Circle ? LineType.TANGENT :
                                                 first(input).contains("Polar") &&
                                                         figure instanceof Circle ? LineType.POLAR:
-                                                        first(input).contains("Line") ? LineType.PARALLEL: LineType.SINGLE;
+                                                        first(input).contains("Line") ? LineType.PARALLELLINE : LineType.SINGLELINE;
+    }
+
+    public LineDescription createDescriptionFromLine(Line line) {
+        return LineDescription
+                .builder()
+                .name(line.getName())
+                .equation(line.getEquation())
+                .type(LineType.valueOf(line.getClass().getSimpleName().toUpperCase()))
+                .build();
+    }
+
+    @SneakyThrows
+    public LineDescription findMaxDescription(LineDescription description, List<LineDescription> context) {
+        LineDescription maxDescription = null;
+        if (context.isEmpty()){
+            return null;
+        }
+        int count = 0;
+        int maxCount = 0;
+        for (LineDescription tempDescription : context) {
+            for (Field field : LineDescription.class.getDeclaredFields()) {
+                field.setAccessible(true);
+                if (field.get(description) == null || field.get(description).equals(field.get(tempDescription))) {
+                    count++;
+                }
+            }
+            if (count > maxCount) {
+                maxCount = count;
+                maxDescription = tempDescription;
+            }
+            count = 0;
+        }
+        maxDescription = LineDescription.builder()
+                .name(maxDescription.getName())
+                .equation(maxDescription.getEquation())
+                .type(maxDescription.getType())
+                .build();
+        for (Field field : LineDescription.class.getDeclaredFields()) {
+            field.setAccessible(true);
+            if (field.get(description) == null || !field.get(description).equals(field.get(maxDescription))) {
+                field.set(maxDescription, null);
+            }
+        }
+        return maxDescription;
+    }
+
+    public List<LineDescription> findCommonLineDescription(List<LineDescription> context1,
+                                                             List<LineDescription> context2) {
+        return context1.size() > context2.size() ?
+                findCommonLineDescription(context2, context1) :
+                context1.stream()
+                        .map(e -> findMaxDescription(e, context2))
+                        .collect(Collectors.toList());
+    }
+
+    public boolean checkAnswer(List<LineDescription> userDrawDescription,
+                               List<LineDescription> answerDescription) {
+        for (LineDescription description : answerDescription) {
+            if (!answerDescription.contains(findMaxDescription(description, userDrawDescription))){
+                return false;
+            }
+        }
+        return true;
     }
 }

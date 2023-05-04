@@ -1,26 +1,14 @@
 package com.example.diplombackend.service;
 
 import com.example.diplombackend.model.description.Description;
-import com.example.diplombackend.model.description.PointDescription;
-import com.example.diplombackend.model.figures.Angle.Angle;
 import com.example.diplombackend.model.figures.Figure;
 import com.example.diplombackend.model.figures.Line.Line;
-import com.example.diplombackend.model.figures.Line.Polyline;
-import com.example.diplombackend.model.figures.Line.Ray;
 import com.example.diplombackend.model.figures.Point.Point;
-import com.example.diplombackend.model.figures.Point.PointType;
-import com.example.diplombackend.model.figures.Polygon.Polygon;
-import com.example.diplombackend.model.figures.Round.Circle;
-import com.example.diplombackend.model.figures.Round.Semicircle;
-import com.example.diplombackend.model.figures.Segment.Segment;
-import com.example.diplombackend.model.figures.Vector.Vector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class DescriptionParserService {
@@ -64,8 +52,8 @@ public class DescriptionParserService {
         for (Figure figure : input) {
             if (figure instanceof Point) {
                 descriptions.add(pointService.createDescriptionFromPoint((Point) figure));
-//            } else if (figure instanceof Polyline) {
-//                descriptions.add(polylineService.createDescriptionFromPolyline((Polyline) figure));
+            } else if (figure instanceof Line) {
+                descriptions.add(lineService.createDescriptionFromLine((Line) figure));
 //            } else if (figure.contains("line")) {
 //                Optional<Line> line1 = lineService.createLineFrom(figure, descriptions);
 //                line1.ifPresent(value -> descriptions.add(value.getClass().cast(value)));

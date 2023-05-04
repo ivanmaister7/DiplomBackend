@@ -5,6 +5,7 @@ import com.example.diplombackend.model.figures.Figure;
 import com.example.diplombackend.model.figures.Line.*;
 import com.example.diplombackend.model.figures.Point.Point;
 import com.example.diplombackend.model.figures.Polygon.Polygon;
+import com.example.diplombackend.model.figures.Polyline.Polyline;
 import com.example.diplombackend.model.figures.Round.Circle;
 import com.example.diplombackend.model.figures.Round.Semicircle;
 import com.example.diplombackend.model.figures.Segment.Segment;

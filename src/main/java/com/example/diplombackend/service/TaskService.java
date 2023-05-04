@@ -1,14 +1,13 @@
 package com.example.diplombackend.service;
 
 import com.example.diplombackend.model.description.Description;
+import com.example.diplombackend.model.description.LineDescription;
 import com.example.diplombackend.model.description.PointDescription;
-import com.example.diplombackend.model.figures.Figure;
-import com.example.diplombackend.model.figures.Point.Point;
+import com.example.diplombackend.model.figures.Line.LineType;
 import com.example.diplombackend.model.figures.Point.PointType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,6 +41,16 @@ public class TaskService {
             PointDescription.builder().name(null).type(PointType.POINT).coordinate1(null).coordinate2(null).build(),
             PointDescription.builder().name(null).type(PointType.POINT).coordinate1(null).coordinate2(null).build(),
             PointDescription.builder().name(null).type(PointType.MIDPOINT).coordinate1(-3.0).coordinate2(2.0).build()
+    );
+    List<Description> answer3 = List.of(
+            PointDescription.builder().name(null).type(PointType.POINT).coordinate1(-1.0).coordinate2(2.0).build(),
+            PointDescription.builder().name(null).type(PointType.POINT).coordinate1(-5.0).coordinate2(2.0).build(),
+            LineDescription.builder().name("f").type(LineType.SINGLELINE).equation("y = 2").build()
+    );
+    List<Description> answer4 = List.of(
+            PointDescription.builder().name(null).type(PointType.POINT).coordinate1(null).coordinate2(null).build(),
+            PointDescription.builder().name(null).type(PointType.POINT).coordinate1(null).coordinate2(null).build(),
+            LineDescription.builder().name(null).type(LineType.SINGLELINE).equation(null).build()
     );
     public boolean checkAnswerById(List<Description> input, String id) {
         Long ID = Long.parseLong(id);
@@ -98,8 +107,28 @@ public class TaskService {
         boolean checkPointAnswer = pointService.checkAnswer(input.stream()
                 .filter(e -> e instanceof PointDescription)
                 .map(e -> (PointDescription) e)
-                .collect(Collectors.toList()), id.equals("1") ? answer : answer2);
-        return checkPointAnswer;
+                .collect(Collectors.toList()),
+                (id.equals("3") ? answer3 : answer4)
+                        .stream()
+                        .filter(e -> e instanceof PointDescription)
+                        .map(e -> (PointDescription) e)
+                        .collect(Collectors.toList()));
+        if (!checkPointAnswer) {
+            return false;
+        }
+        boolean checkLineAnswer = lineService.checkAnswer(input.stream()
+                .filter(e -> e instanceof LineDescription)
+                .map(e -> (LineDescription) e)
+                .collect(Collectors.toList()),
+                (id.equals("3") ? answer3 : answer4)
+                        .stream()
+                        .filter(e -> e instanceof LineDescription)
+                        .map(e -> (LineDescription) e)
+                        .collect(Collectors.toList()));
+        if (!checkLineAnswer) {
+            return false;
+        }
+        return true;
     }
 
 }

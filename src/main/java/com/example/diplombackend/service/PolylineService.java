@@ -1,7 +1,7 @@
 package com.example.diplombackend.service;
 
 import com.example.diplombackend.model.figures.Figure;
-import com.example.diplombackend.model.figures.Line.Polyline;
+import com.example.diplombackend.model.figures.Polyline.Polyline;
 import com.example.diplombackend.model.figures.Point.Point;
 import org.springframework.stereotype.Service;
 
