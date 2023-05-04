@@ -26,7 +26,7 @@ public class TaskController {
     TaskService taskService;
     Task task = new Task(1L,"Draw midpoint named Mid of fixed points Start(-5,2) and End(-1,2)", "5", false);
     Task task2 = new Task(2L,"Draw midpoint (-3,2) of random points", "5", false);
-    Task task3 = new Task(3L,"Draw line named f of y = 1 on points (-5,2) and (-1,2)", "5", false);
+    Task task3 = new Task(3L,"Draw line named f of y = 2 on points (-5,2) and (-1,2)", "5", false);
     Task task4 = new Task(4L,"Draw any line", "5", false);
 
     @GetMapping("/info/{id}")

@@ -5,9 +5,11 @@ import com.example.diplombackend.model.description.LineDescription;
 import com.example.diplombackend.model.description.PointDescription;
 import com.example.diplombackend.model.figures.Line.LineType;
 import com.example.diplombackend.model.figures.Point.PointType;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -103,32 +105,77 @@ public class TaskService {
 //                descriptions.add(angle.getClass().cast(angle));
 //            }
 //        }
-//        System.out.println("----------------------------");
-        boolean checkPointAnswer = pointService.checkAnswer(input.stream()
-                .filter(e -> e instanceof PointDescription)
-                .map(e -> (PointDescription) e)
-                .collect(Collectors.toList()),
-                (id.equals("3") ? answer3 : answer4)
-                        .stream()
-                        .filter(e -> e instanceof PointDescription)
-                        .map(e -> (PointDescription) e)
-                        .collect(Collectors.toList()));
-        if (!checkPointAnswer) {
-            return false;
-        }
-        boolean checkLineAnswer = lineService.checkAnswer(input.stream()
-                .filter(e -> e instanceof LineDescription)
-                .map(e -> (LineDescription) e)
-                .collect(Collectors.toList()),
-                (id.equals("3") ? answer3 : answer4)
-                        .stream()
-                        .filter(e -> e instanceof LineDescription)
-                        .map(e -> (LineDescription) e)
-                        .collect(Collectors.toList()));
-        if (!checkLineAnswer) {
-            return false;
+        List<Class<? extends Description>> descriptions = List.of(
+                PointDescription.class,
+                LineDescription.class
+        );
+        for (Class<? extends Description> c :descriptions) {
+            boolean checkAnswer = checkAnswerForType(input, (id.equals("3") ? answer3 : answer4), c);
+            if (!checkAnswer) {
+                return false;
+            }
         }
         return true;
+    }
+
+    private <T extends Description> boolean checkAnswerForType(List<Description> input, List<Description> answer, Class<T> type) {
+        List<T> inputOfType = input.stream()
+                .filter(type::isInstance)
+                .map(type::cast)
+                .collect(Collectors.toList());
+        List<T> answerOfType = answer.stream()
+                .filter(type::isInstance)
+                .map(type::cast)
+                .collect(Collectors.toList());
+        return checkAnswer(inputOfType, answerOfType);
+    }
+
+    @SneakyThrows
+    public <T> T findMaxDescription(T description, List<T> context) {
+        T maxDescription = null;
+        if (context.isEmpty()){
+            return null;
+        }
+        int count = 0;
+        int maxCount = 0;
+        for (T tempDescription : context) {
+            for (Field field : description.getClass().getDeclaredFields()) {
+                field.setAccessible(true);
+                if (field.get(description) == null || field.get(description).equals(field.get(tempDescription))) {
+                    count++;
+                }
+            }
+            if (count > maxCount) {
+                maxCount = count;
+                maxDescription = tempDescription;
+            }
+            count = 0;
+        }
+        maxDescription = (T) maxDescription.getClass().getConstructor(maxDescription.getClass()).newInstance(maxDescription);
+        for (Field field : description.getClass().getDeclaredFields()) {
+            field.setAccessible(true);
+            if (field.get(description) == null || !field.get(description).equals(field.get(maxDescription))) {
+                field.set(maxDescription, null);
+            } else {
+                field.set(maxDescription, field.get(description));
+            }
+        }
+        return maxDescription;
+    }
+    public <T> boolean checkAnswer(List<T> userDrawDescription, List<T> answerDescription) {
+        for (T description : answerDescription) {
+            if (!answerDescription.contains(findMaxDescription(description, userDrawDescription))){
+                return false;
+            }
+        }
+        return true;
+    }
+    public <T> List<T> findCommonElements(List<T> context1, List<T> context2) {
+        return context1.size() > context2.size() ?
+                findCommonElements(context2, context1) :
+                context1.stream()
+                        .map(e -> findMaxDescription(e, context2))
+                        .collect(Collectors.toList());
     }
 
 }
