@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,26 +43,6 @@ public class TaskService {
     @FigureDescription
     List<Description> descriptions;
 
-    List<PointDescription> answer = List.of(
-            PointDescription.builder().name("End").type(PointType.POINT).coordinate1(-1.0).coordinate2(2.0).build(),
-            PointDescription.builder().name("Start").type(PointType.POINT).coordinate1(-5.0).coordinate2(2.0).build(),
-            PointDescription.builder().name("Mid").type(PointType.MIDPOINT).coordinate1(-3.0).coordinate2(2.0).build()
-    );
-    List<PointDescription> answer2 = List.of(
-            PointDescription.builder().name(null).type(PointType.POINT).coordinate1(null).coordinate2(null).build(),
-            PointDescription.builder().name(null).type(PointType.POINT).coordinate1(null).coordinate2(null).build(),
-            PointDescription.builder().name(null).type(PointType.MIDPOINT).coordinate1(-3.0).coordinate2(2.0).build()
-    );
-    List<Description> answer3 = List.of(
-            PointDescription.builder().name(null).type(PointType.POINT).coordinate1(-1.0).coordinate2(2.0).build(),
-            PointDescription.builder().name(null).type(PointType.POINT).coordinate1(-5.0).coordinate2(2.0).build(),
-            LineDescription.builder().name("f").type(LineType.SINGLELINE).equation("y = 2").build()
-    );
-    List<Description> answer4 = List.of(
-            PointDescription.builder().name(null).type(PointType.POINT).coordinate1(null).coordinate2(null).build(),
-            PointDescription.builder().name(null).type(PointType.POINT).coordinate1(null).coordinate2(null).build(),
-            LineDescription.builder().name(null).type(LineType.SINGLELINE).equation(null).build()
-    );
     public boolean checkAnswerById(List<Description> input, Long id) {
 //        List<String> figuresText = new ArrayList<>(TextParser.splitByRegex(input, "\n"));
 //        List<Figure> figures = new ArrayList<>();
@@ -202,20 +183,32 @@ public class TaskService {
                     count++;
                 }
             }
-            if (count == description.getClass().getDeclaredFields().length - 2){
+            if (count >= description.getClass().getDeclaredFields().length - 2){
                 return true;
             }
             count = 0;
         }
         return false;
     }
+    public <T extends Description> List<T> findCommonElementsByType(List<Description> context1, List<Description> context2, Class<T> type) {
+        List<T> context1OfType = getDescriptionsOfType(context1, type);
+        List<T> context2OfType = getDescriptionsOfType(context2, type);
+        return findCommonElements(context1OfType, context2OfType);
+    }
 
-    public <T> List<T> findCommonElements(List<T> context1, List<T> context2) {
+    private <T> List<T> findCommonElements(List<T> context1, List<T> context2) {
         return context1.size() > context2.size() ?
                 findCommonElements(context2, context1) :
                 context1.stream()
                         .map(e -> findMaxDescription(e, context2))
                         .collect(Collectors.toList());
+    }
+    public List<Description> findCommonElementsFull(List<Description> context1, List<Description> context2) {
+        List<Description> result = new ArrayList<>();
+        for (Description c : descriptions) {
+            result.addAll(findCommonElementsByType(context1, context2, c.getClass()));
+        }
+        return result;
     }
 
 }
