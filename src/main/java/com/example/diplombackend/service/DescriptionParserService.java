@@ -8,6 +8,8 @@ import com.example.diplombackend.model.figures.Line.Ray;
 import com.example.diplombackend.model.figures.Point.Point;
 import com.example.diplombackend.model.figures.Polygon.Polygon;
 import com.example.diplombackend.model.figures.Polyline.Polyline;
+import com.example.diplombackend.model.figures.Round.Circle;
+import com.example.diplombackend.model.figures.Round.Semicircle;
 import com.example.diplombackend.model.figures.Segment.Segment;
 import com.example.diplombackend.model.figures.Vector.Vector;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +75,10 @@ public class DescriptionParserService {
                 descriptions.add(angleService.createDescriptionFromAngle((Angle) figure));
             } else if (figure instanceof Polygon) {
                 descriptions.add(polygonService.createDescriptionFromPolygon((Polygon) figure));
+            } else if (figure instanceof Circle) {
+                descriptions.add(circleService.createDescriptionFromCircle((Circle) figure));
+            } else if (figure instanceof Semicircle) {
+                descriptions.add(circleService.createDescriptionFromSemicircle((Semicircle) figure));
 
 //            } else if (figure.contains("line")) {
 //                Optional<Line> line1 = lineService.createLineFrom(figure, descriptions);

@@ -180,6 +180,14 @@ public class TaskController {
         descriptionsOfType8.forEach(e -> e.setTask(task));
         task.setDescriptions8(descriptionsOfType8);
 
+        List<CircleDescription> descriptionsOfType9 = getDescriptionsOfType(firstDescriptions, CircleDescription.class);
+        descriptionsOfType9.forEach(e -> e.setTask(task));
+        task.setDescriptions9(descriptionsOfType9);
+
+        List<SemicircleDescription> descriptionsOfType10 = getDescriptionsOfType(firstDescriptions, SemicircleDescription.class);
+        descriptionsOfType10.forEach(e -> e.setTask(task));
+        task.setDescriptions10(descriptionsOfType10);
+
         taskRepository.save(task);
 
         attemptsResponse = new AttemptsResponse();

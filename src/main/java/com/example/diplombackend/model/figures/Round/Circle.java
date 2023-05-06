@@ -13,7 +13,7 @@ public class Circle implements Figure {
     private String equation;
     private Point center;
 
-    public double getRadius() {
+    public Double getRadius() {
         return Math.sqrt(Double.parseDouble(last(split(equation))));
     }
 

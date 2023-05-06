@@ -1,6 +1,11 @@
 package com.example.diplombackend.service;
 
+import com.example.diplombackend.model.description.CircleDescription;
+import com.example.diplombackend.model.description.LineDescription;
+import com.example.diplombackend.model.description.SemicircleDescription;
 import com.example.diplombackend.model.figures.Figure;
+import com.example.diplombackend.model.figures.Line.Line;
+import com.example.diplombackend.model.figures.Line.LineType;
 import com.example.diplombackend.model.figures.Point.Point;
 import com.example.diplombackend.model.figures.Round.*;
 import org.springframework.stereotype.Service;
@@ -81,5 +86,22 @@ public class CircleService {
                 .matches("\\d{1,13}(\\.\\d*)?") ? CircleType.CIRCLE :
                 prelast(input).contains("Segment") ? CircleType.CIRCLE :
                         input.size() == 3 ? CircleType.CIRCLEBYPOINTS : CircleType.CIRCLER;
+    }
+    public CircleDescription createDescriptionFromCircle(Circle circle) {
+        return CircleDescription
+                .builder()
+                .name(circle.getName())
+                .equation(circle.getEquation())
+                .radius(circle.getRadius())
+                .type(CircleType.valueOf(circle.getClass().getSimpleName().toUpperCase()))
+                .build();
+    }
+    public SemicircleDescription createDescriptionFromSemicircle(Semicircle circle) {
+        return SemicircleDescription
+                .builder()
+                .name(circle.getName())
+                .length(circle.getLength())
+                .radius(circle.getRadius())
+                .build();
     }
 }

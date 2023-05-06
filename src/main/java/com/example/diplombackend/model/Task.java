@@ -51,6 +51,12 @@ public class Task {
     @JsonIgnore
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
     public List<PolygonDescription> descriptions8 = new ArrayList<>();
+    @JsonIgnore
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
+    public List<CircleDescription> descriptions9 = new ArrayList<>();
+    @JsonIgnore
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
+    public List<SemicircleDescription> descriptions10 = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
@@ -71,6 +77,8 @@ public class Task {
         d.addAll(descriptions6);
         d.addAll(descriptions7);
         d.addAll(descriptions8);
+        d.addAll(descriptions9);
+        d.addAll(descriptions10);
         return d;
     }
 
