@@ -7,9 +7,8 @@ import com.example.diplombackend.model.UserTaskKey;
 import com.example.diplombackend.model.description.Description;
 import com.example.diplombackend.model.description.LineDescription;
 import com.example.diplombackend.model.description.PointDescription;
+import com.example.diplombackend.model.description.SegmentDescription;
 import com.example.diplombackend.model.figures.Figure;
-import com.example.diplombackend.model.figures.Line.LineType;
-import com.example.diplombackend.model.figures.Point.PointType;
 import com.example.diplombackend.model.request.TaskRequest;
 import com.example.diplombackend.model.responce.AttemptsResponse;
 import com.example.diplombackend.model.responce.TaskResponse;
@@ -24,8 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.example.diplombackend.service.TaskService.getDescriptionsOfType;
@@ -61,10 +60,10 @@ public class TaskController {
         return ResponseEntity.ok(taskRepository
                 .findAll()
                 .stream()
-                .map(e -> new TaskResponse(e, userTaskRepository
-                        .findById(new UserTaskKey(e.getTask_id(), id))
-                        .orElseThrow()
-                        .isDone())));
+                .map(e -> {
+                    Optional<UserTask> userTask = userTaskRepository.findById(new UserTaskKey(e.getTask_id(), id));
+                    return new TaskResponse(e, userTask.isPresent() && userTask.get().isDone());
+                }));
     }
     @GetMapping("/info/filter/{id}")
     public ResponseEntity<?> getAllTasksByFilter(@RequestParam String filter, @PathVariable Long id) {
@@ -72,18 +71,19 @@ public class TaskController {
             return ResponseEntity.ok(taskRepository
                     .findAll()
                     .stream()
-                    .map(e -> new TaskResponse(e, userTaskRepository
-                            .findById(new UserTaskKey(e.getTask_id(), id))
-                            .orElseThrow()
-                            .isDone())));
+                    .map(e -> {
+                        Optional<UserTask> userTask = userTaskRepository.findById(new UserTaskKey(e.getTask_id(), id));
+                        return new TaskResponse(e, userTask.isPresent() && userTask.get().isDone());
+                    }));
         }
-        return ResponseEntity.ok(taskRepository.findAll()
+        return ResponseEntity.ok(taskRepository
+                .findAll()
                 .stream()
                 .filter(e -> e.getBook().toString().equals(filter))
-                .map(e -> new TaskResponse(e, userTaskRepository
-                        .findById(new UserTaskKey(e.getTask_id(), id))
-                        .orElseThrow()
-                        .isDone())));
+                .map(e -> {
+                    Optional<UserTask> userTask = userTaskRepository.findById(new UserTaskKey(e.getTask_id(), id));
+                    return new TaskResponse(e, userTask.isPresent() && userTask.get().isDone());
+                }));
     }
     @GetMapping("/info/{id}")
     public ResponseEntity<?> getTaskById(@PathVariable Long id) {
@@ -92,7 +92,7 @@ public class TaskController {
 
     @GetMapping("/check/{id}/{user}")
     public ResponseEntity<?> getIsDoneById(@PathVariable Long id, @PathVariable Long user) {
-        if (!userTaskRepository.findById(new UserTaskKey(id,user)).isPresent()) {
+        if (userTaskRepository.findById(new UserTaskKey(id,user)).isEmpty()) {
             UserTask userTask = new UserTask();
             userTask.setTask(taskRepository.findById(id).orElseThrow());
             userTask.setUser(userRepository.findById(user).orElseThrow());
@@ -156,6 +156,9 @@ public class TaskController {
         List<LineDescription> descriptionsOfType2 = getDescriptionsOfType(firstDescriptions, LineDescription.class);
         descriptionsOfType2.forEach(e -> e.setTask(task));
         task.setDescriptions2(descriptionsOfType2);
+        List<SegmentDescription> descriptionsOfType3 = getDescriptionsOfType(firstDescriptions, SegmentDescription.class);
+        descriptionsOfType3.forEach(e -> e.setTask(task));
+        task.setDescriptions3(descriptionsOfType3);
         taskRepository.save(task);
 
         attemptsResponse = new AttemptsResponse();

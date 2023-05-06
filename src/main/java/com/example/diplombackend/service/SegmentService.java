@@ -1,6 +1,10 @@
 package com.example.diplombackend.service;
 
+import com.example.diplombackend.model.description.LineDescription;
+import com.example.diplombackend.model.description.SegmentDescription;
 import com.example.diplombackend.model.figures.Figure;
+import com.example.diplombackend.model.figures.Line.Line;
+import com.example.diplombackend.model.figures.Line.LineType;
 import com.example.diplombackend.model.figures.Segment.Segment;
 import com.example.diplombackend.model.figures.Segment.SegmentIn;
 import com.example.diplombackend.model.figures.Segment.SegmentType;
@@ -22,7 +26,7 @@ public class SegmentService {
         Segment segment = null;
         List<String> temp = elements.subList(1, lastIndex(elements));
         SegmentType type = checkType(temp);
-        if (type.equals(SegmentType.SINGLE)) {
+        if (type.equals(SegmentType.SEGMENT)) {
             segment = new Segment();
         } else if (type.equals(SegmentType.SEGMENTIN)) {
             segment = new SegmentIn();
@@ -35,7 +39,9 @@ public class SegmentService {
         segment.setName(last(split(first(elements))));
         segment.setLength(Double.parseDouble(last(split(last(elements)))));
         String A = last(splitByRegex(first(temp), "\\("));
-        String B = prelast(temp);
+        String B = type.equals(SegmentType.SEGMENTIN) ?
+                prelast(temp) :
+                last(temp).replaceAll("\\)", "");
         segment.setA((Point) context.stream()
                 .filter(e -> e instanceof Point && e.getName().equals(A))
                 .findFirst()
@@ -48,7 +54,7 @@ public class SegmentService {
         return segment;
     }
     public SegmentType checkType(List<String> input) {
-        return input.size() == 3 ? SegmentType.SEGMENTIN : SegmentType.SINGLE;
+        return input.size() == 3 ? SegmentType.SEGMENTIN : SegmentType.SEGMENT;
     }
 
     public void optimizeAll(List<Figure> context) {
@@ -60,5 +66,13 @@ public class SegmentService {
                     base.addPoint(((SegmentIn) segment).getA());
                     base.addPoint(((SegmentIn) segment).getB());
                 });
+    }
+    public SegmentDescription createDescriptionFromSegment(Segment segment) {
+        return SegmentDescription
+                .builder()
+                .name(segment.getName())
+                .length(segment.getLength())
+                .type(SegmentType.valueOf(segment.getClass().getSimpleName().toUpperCase()))
+                .build();
     }
 }

@@ -3,6 +3,7 @@ package com.example.diplombackend.model;
 import com.example.diplombackend.model.description.Description;
 import com.example.diplombackend.model.description.LineDescription;
 import com.example.diplombackend.model.description.PointDescription;
+import com.example.diplombackend.model.description.SegmentDescription;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,6 +36,9 @@ public class Task {
     @JsonIgnore
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
     public List<LineDescription> descriptions2 = new ArrayList<>();
+    @JsonIgnore
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
+    public List<SegmentDescription> descriptions3 = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
@@ -49,6 +53,7 @@ public class Task {
         ArrayList<Description> d = new ArrayList<>();
         d.addAll(descriptions);
         d.addAll(descriptions2);
+        d.addAll(descriptions3);
         return d;
     }
 
