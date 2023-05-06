@@ -172,6 +172,14 @@ public class TaskController {
         descriptionsOfType6.forEach(e -> e.setTask(task));
         task.setDescriptions6(descriptionsOfType6);
 
+        List<AngleDescription> descriptionsOfType7 = getDescriptionsOfType(firstDescriptions, AngleDescription.class);
+        descriptionsOfType7.forEach(e -> e.setTask(task));
+        task.setDescriptions7(descriptionsOfType7);
+
+        List<PolygonDescription> descriptionsOfType8 = getDescriptionsOfType(firstDescriptions, PolygonDescription.class);
+        descriptionsOfType8.forEach(e -> e.setTask(task));
+        task.setDescriptions8(descriptionsOfType8);
+
         taskRepository.save(task);
 
         attemptsResponse = new AttemptsResponse();

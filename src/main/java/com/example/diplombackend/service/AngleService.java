@@ -1,8 +1,12 @@
 package com.example.diplombackend.service;
 
+import com.example.diplombackend.model.description.AngleDescription;
+import com.example.diplombackend.model.description.SegmentDescription;
 import com.example.diplombackend.model.figures.Angle.Angle;
 import com.example.diplombackend.model.figures.Figure;
 import com.example.diplombackend.model.figures.Point.Point;
+import com.example.diplombackend.model.figures.Segment.Segment;
+import com.example.diplombackend.model.figures.Segment.SegmentType;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,5 +42,12 @@ public class AngleService {
                 .orElseThrow());
 
         return angle;
+    }
+    public AngleDescription createDescriptionFromAngle(Angle angle) {
+        return AngleDescription
+                .builder()
+                .name(angle.getName())
+                .angle(angle.getAngle())
+                .build();
     }
 }

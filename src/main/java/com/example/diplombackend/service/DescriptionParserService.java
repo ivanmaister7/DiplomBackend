@@ -1,10 +1,12 @@
 package com.example.diplombackend.service;
 
 import com.example.diplombackend.model.description.Description;
+import com.example.diplombackend.model.figures.Angle.Angle;
 import com.example.diplombackend.model.figures.Figure;
 import com.example.diplombackend.model.figures.Line.Line;
 import com.example.diplombackend.model.figures.Line.Ray;
 import com.example.diplombackend.model.figures.Point.Point;
+import com.example.diplombackend.model.figures.Polygon.Polygon;
 import com.example.diplombackend.model.figures.Polyline.Polyline;
 import com.example.diplombackend.model.figures.Segment.Segment;
 import com.example.diplombackend.model.figures.Vector.Vector;
@@ -67,6 +69,10 @@ public class DescriptionParserService {
                 descriptions.add(polylineService.createDescriptionFromPolyline((Polyline) figure));
             } else if (figure instanceof Vector) {
                 descriptions.add(vectorService.createDescriptionFromVector((Vector) figure));
+            } else if (figure instanceof Angle) {
+                descriptions.add(angleService.createDescriptionFromAngle((Angle) figure));
+            } else if (figure instanceof Polygon) {
+                descriptions.add(polygonService.createDescriptionFromPolygon((Polygon) figure));
 
 //            } else if (figure.contains("line")) {
 //                Optional<Line> line1 = lineService.createLineFrom(figure, descriptions);
