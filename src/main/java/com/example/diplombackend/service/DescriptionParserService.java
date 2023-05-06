@@ -3,6 +3,7 @@ package com.example.diplombackend.service;
 import com.example.diplombackend.model.description.Description;
 import com.example.diplombackend.model.figures.Figure;
 import com.example.diplombackend.model.figures.Line.Line;
+import com.example.diplombackend.model.figures.Line.Ray;
 import com.example.diplombackend.model.figures.Point.Point;
 import com.example.diplombackend.model.figures.Segment.Segment;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,10 +54,13 @@ public class DescriptionParserService {
         for (Figure figure : input) {
             if (figure instanceof Point) {
                 descriptions.add(pointService.createDescriptionFromPoint((Point) figure));
+            } else if (figure instanceof Ray) {
+                descriptions.add(rayService.createDescriptionFromRay((Ray) figure));
             } else if (figure instanceof Line) {
                 descriptions.add(lineService.createDescriptionFromLine((Line) figure));
             } else if (figure instanceof Segment) {
                 descriptions.add(segmentService.createDescriptionFromSegment((Segment) figure));
+
 //            } else if (figure.contains("line")) {
 //                Optional<Line> line1 = lineService.createLineFrom(figure, descriptions);
 //                line1.ifPresent(value -> descriptions.add(value.getClass().cast(value)));

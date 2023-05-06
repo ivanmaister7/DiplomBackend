@@ -4,10 +4,7 @@ import com.example.diplombackend.model.Book;
 import com.example.diplombackend.model.Task;
 import com.example.diplombackend.model.UserTask;
 import com.example.diplombackend.model.UserTaskKey;
-import com.example.diplombackend.model.description.Description;
-import com.example.diplombackend.model.description.LineDescription;
-import com.example.diplombackend.model.description.PointDescription;
-import com.example.diplombackend.model.description.SegmentDescription;
+import com.example.diplombackend.model.description.*;
 import com.example.diplombackend.model.figures.Figure;
 import com.example.diplombackend.model.request.TaskRequest;
 import com.example.diplombackend.model.responce.AttemptsResponse;
@@ -150,15 +147,23 @@ public class TaskController {
         Task task = new Task();
         task.setQuestion(taskRequest.getQuestion());
         task.setBook(bookRepository.findBookByName(taskRequest.getBook().split(", ")[0]));
+
         List<PointDescription> descriptionsOfType = getDescriptionsOfType(firstDescriptions, PointDescription.class);
         descriptionsOfType.forEach(e -> e.setTask(task));
         task.setDescriptions(descriptionsOfType);
+
         List<LineDescription> descriptionsOfType2 = getDescriptionsOfType(firstDescriptions, LineDescription.class);
         descriptionsOfType2.forEach(e -> e.setTask(task));
         task.setDescriptions2(descriptionsOfType2);
+
         List<SegmentDescription> descriptionsOfType3 = getDescriptionsOfType(firstDescriptions, SegmentDescription.class);
         descriptionsOfType3.forEach(e -> e.setTask(task));
         task.setDescriptions3(descriptionsOfType3);
+
+        List<RayDescription> descriptionsOfType4 = getDescriptionsOfType(firstDescriptions, RayDescription.class);
+        descriptionsOfType4.forEach(e -> e.setTask(task));
+        task.setDescriptions4(descriptionsOfType4);
+
         taskRepository.save(task);
 
         attemptsResponse = new AttemptsResponse();
