@@ -164,6 +164,10 @@ public class TaskController {
         descriptionsOfType4.forEach(e -> e.setTask(task));
         task.setDescriptions4(descriptionsOfType4);
 
+        List<PolylineDescription> descriptionsOfType5 = getDescriptionsOfType(firstDescriptions, PolylineDescription.class);
+        descriptionsOfType5.forEach(e -> e.setTask(task));
+        task.setDescriptions5(descriptionsOfType5);
+
         taskRepository.save(task);
 
         attemptsResponse = new AttemptsResponse();

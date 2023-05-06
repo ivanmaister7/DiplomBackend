@@ -1,8 +1,12 @@
 package com.example.diplombackend.service;
 
+import com.example.diplombackend.model.description.PolylineDescription;
+import com.example.diplombackend.model.description.SegmentDescription;
 import com.example.diplombackend.model.figures.Figure;
 import com.example.diplombackend.model.figures.Polyline.Polyline;
 import com.example.diplombackend.model.figures.Point.Point;
+import com.example.diplombackend.model.figures.Segment.Segment;
+import com.example.diplombackend.model.figures.Segment.SegmentType;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,5 +33,12 @@ public class PolylineService {
         }
 
         return polyline;
+    }
+    public PolylineDescription createDescriptionFromPolyline(Polyline polyline) {
+        return PolylineDescription
+                .builder()
+                .name(polyline.getName())
+                .length(polyline.getLength())
+                .build();
     }
 }
