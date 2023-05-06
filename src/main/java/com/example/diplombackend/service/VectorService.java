@@ -1,6 +1,10 @@
 package com.example.diplombackend.service;
 
+import com.example.diplombackend.model.description.LineDescription;
+import com.example.diplombackend.model.description.VectorDescription;
 import com.example.diplombackend.model.figures.Figure;
+import com.example.diplombackend.model.figures.Line.Line;
+import com.example.diplombackend.model.figures.Line.LineType;
 import com.example.diplombackend.model.figures.Vector.CollinearVector;
 import com.example.diplombackend.model.figures.Vector.Vector;
 import com.example.diplombackend.model.figures.Point.Point;
@@ -43,5 +47,12 @@ public class VectorService {
                 .filter(e -> e instanceof Point && e.getName().equals(name))
                 .findFirst()
                 .orElseThrow();
+    }
+    public VectorDescription createDescriptionFromVector(Vector vector) {
+        return VectorDescription
+                .builder()
+                .name(vector.getName())
+                .equation(vector.getEquation())
+                .build();
     }
 }

@@ -42,6 +42,9 @@ public class Task {
     @JsonIgnore
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
     public List<PolylineDescription> descriptions5 = new ArrayList<>();
+    @JsonIgnore
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
+    public List<VectorDescription> descriptions6 = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
@@ -59,6 +62,7 @@ public class Task {
         d.addAll(descriptions3);
         d.addAll(descriptions4);
         d.addAll(descriptions5);
+        d.addAll(descriptions6);
         return d;
     }
 

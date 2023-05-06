@@ -168,6 +168,10 @@ public class TaskController {
         descriptionsOfType5.forEach(e -> e.setTask(task));
         task.setDescriptions5(descriptionsOfType5);
 
+        List<VectorDescription> descriptionsOfType6 = getDescriptionsOfType(firstDescriptions, VectorDescription.class);
+        descriptionsOfType6.forEach(e -> e.setTask(task));
+        task.setDescriptions6(descriptionsOfType6);
+
         taskRepository.save(task);
 
         attemptsResponse = new AttemptsResponse();

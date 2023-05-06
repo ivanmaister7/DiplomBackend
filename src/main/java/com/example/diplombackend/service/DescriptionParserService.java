@@ -7,6 +7,7 @@ import com.example.diplombackend.model.figures.Line.Ray;
 import com.example.diplombackend.model.figures.Point.Point;
 import com.example.diplombackend.model.figures.Polyline.Polyline;
 import com.example.diplombackend.model.figures.Segment.Segment;
+import com.example.diplombackend.model.figures.Vector.Vector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
@@ -64,6 +65,8 @@ public class DescriptionParserService {
                 descriptions.add(segmentService.createDescriptionFromSegment((Segment) figure));
             } else if (figure instanceof Polyline) {
                 descriptions.add(polylineService.createDescriptionFromPolyline((Polyline) figure));
+            } else if (figure instanceof Vector) {
+                descriptions.add(vectorService.createDescriptionFromVector((Vector) figure));
 
 //            } else if (figure.contains("line")) {
 //                Optional<Line> line1 = lineService.createLineFrom(figure, descriptions);
