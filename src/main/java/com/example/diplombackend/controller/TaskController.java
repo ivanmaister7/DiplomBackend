@@ -1,14 +1,21 @@
 package com.example.diplombackend.controller;
 
+import com.example.diplombackend.model.Book;
 import com.example.diplombackend.model.Task;
 import com.example.diplombackend.model.UserTask;
+import com.example.diplombackend.model.UserTaskKey;
 import com.example.diplombackend.model.description.Description;
 import com.example.diplombackend.model.description.LineDescription;
 import com.example.diplombackend.model.description.PointDescription;
 import com.example.diplombackend.model.figures.Figure;
 import com.example.diplombackend.model.figures.Line.LineType;
 import com.example.diplombackend.model.figures.Point.PointType;
+import com.example.diplombackend.model.request.TaskRequest;
+import com.example.diplombackend.model.responce.AttemptsResponse;
+import com.example.diplombackend.model.responce.TaskResponse;
+import com.example.diplombackend.repository.BookRepository;
 import com.example.diplombackend.repository.TaskRepository;
+import com.example.diplombackend.repository.UserRepository;
 import com.example.diplombackend.repository.UserTaskRepository;
 import com.example.diplombackend.service.DescriptionParserService;
 import com.example.diplombackend.service.GeometryParserService;
@@ -36,10 +43,48 @@ public class TaskController {
     //TODO: remove repo and move to another service
     @Autowired
     TaskRepository taskRepository;
+    //TODO: remove repo and move to another service
+    @Autowired
+    BookRepository bookRepository;
     @Autowired
     UserTaskRepository userTaskRepository;
+    @Autowired
+    UserRepository userRepository;
     List<Description> firstDescriptions = null;
-
+    AttemptsResponse attemptsResponse = new AttemptsResponse();
+    @GetMapping("/info")
+    public ResponseEntity<?> getAllTasks() {
+        return ResponseEntity.ok(taskRepository.findAll());
+    }
+    @GetMapping("/info/user/{id}")
+    public ResponseEntity<?> getAllTasksForUser(@PathVariable Long id) {
+        return ResponseEntity.ok(taskRepository
+                .findAll()
+                .stream()
+                .map(e -> new TaskResponse(e, userTaskRepository
+                        .findById(new UserTaskKey(e.getTask_id(), id))
+                        .orElseThrow()
+                        .isDone())));
+    }
+    @GetMapping("/info/filter/{id}")
+    public ResponseEntity<?> getAllTasksByFilter(@RequestParam String filter, @PathVariable Long id) {
+        if (filter.equals("All")) {
+            return ResponseEntity.ok(taskRepository
+                    .findAll()
+                    .stream()
+                    .map(e -> new TaskResponse(e, userTaskRepository
+                            .findById(new UserTaskKey(e.getTask_id(), id))
+                            .orElseThrow()
+                            .isDone())));
+        }
+        return ResponseEntity.ok(taskRepository.findAll()
+                .stream()
+                .filter(e -> e.getBook().toString().equals(filter))
+                .map(e -> new TaskResponse(e, userTaskRepository
+                        .findById(new UserTaskKey(e.getTask_id(), id))
+                        .orElseThrow()
+                        .isDone())));
+    }
     @GetMapping("/info/{id}")
     public ResponseEntity<?> getTaskById(@PathVariable Long id) {
         return ResponseEntity.ok(taskRepository.findById(id).orElseThrow());
@@ -47,6 +92,13 @@ public class TaskController {
 
     @GetMapping("/check/{id}/{user}")
     public ResponseEntity<?> getIsDoneById(@PathVariable Long id, @PathVariable Long user) {
+        if (!userTaskRepository.findById(new UserTaskKey(id,user)).isPresent()) {
+            UserTask userTask = new UserTask();
+            userTask.setTask(taskRepository.findById(id).orElseThrow());
+            userTask.setUser(userRepository.findById(user).orElseThrow());
+            userTask.setDone(false);
+            userTaskRepository.save(userTask);
+        }
 
         return ResponseEntity.ok(taskRepository
                 .findById(id)
@@ -66,18 +118,6 @@ public class TaskController {
         List<Figure> figures = geometryParserService.parseText(userInput);
         List<Description> descriptions = descriptionParserService.parseFigure(figures);
 
-//        Task task = new Task();
-//        task.setIsDone(false);
-//        task.setQuestion("Draw any line");
-//        List<PointDescription> descriptionsOfType = getDescriptionsOfType(answer4, PointDescription.class);
-//        descriptionsOfType.forEach(e -> e.setTask(task));
-//        task.setDescriptions(descriptionsOfType);
-//        List<LineDescription> descriptionsOfType2 = getDescriptionsOfType(answer4, LineDescription.class);
-//        descriptionsOfType2.forEach(e -> e.setTask(task));
-//        task.setDescriptions2(descriptionsOfType2);
-//        taskRepository.save(task);
-//        System.out.println(taskRepository.findAll());
-
         UserTask userTask = taskRepository
                 .findById(id)
                 .orElseThrow()
@@ -96,15 +136,20 @@ public class TaskController {
         List<Figure> figures = geometryParserService.parseText(userInput);
         List<Description> descriptions = descriptionParserService.parseFigure(figures);
 
-        firstDescriptions = attempt.equals("1") ?
-                descriptions : taskService.findCommonElementsFull(firstDescriptions, descriptions);
-
+        if (attempt.equals("1")) {
+            firstDescriptions = descriptions;
+            attemptsResponse.setAttempt1(true);
+        } else {
+            firstDescriptions = taskService.findCommonElementsFull(firstDescriptions, descriptions);
+            attemptsResponse.setAttempt2(true);
+        }
         return ResponseEntity.ok("");
     }
     @PostMapping("/new")
-    public ResponseEntity<?> addNewTask(@RequestBody String taskQuestion) {
+    public ResponseEntity<?> addNewTask(@RequestBody TaskRequest taskRequest) {
         Task task = new Task();
-        task.setQuestion(taskQuestion);
+        task.setQuestion(taskRequest.getQuestion());
+        task.setBook(bookRepository.findBookByName(taskRequest.getBook().split(", ")[0]));
         List<PointDescription> descriptionsOfType = getDescriptionsOfType(firstDescriptions, PointDescription.class);
         descriptionsOfType.forEach(e -> e.setTask(task));
         task.setDescriptions(descriptionsOfType);
@@ -112,6 +157,26 @@ public class TaskController {
         descriptionsOfType2.forEach(e -> e.setTask(task));
         task.setDescriptions2(descriptionsOfType2);
         taskRepository.save(task);
+
+        attemptsResponse = new AttemptsResponse();
         return ResponseEntity.ok("");
+    }
+    @PostMapping("/new/clear")
+    public ResponseEntity<?> clearAttempts() {
+        attemptsResponse = new AttemptsResponse();
+        return ResponseEntity.ok("");
+    }
+    @GetMapping("/books")
+    public ResponseEntity<?> getAllBooks() {
+        List<String> allBooks = bookRepository.findAll()
+                .stream()
+                .map(Book::toString)
+                .collect(Collectors.toList());
+        allBooks.add(0,"All");
+        return ResponseEntity.ok(allBooks);
+    }
+    @GetMapping("/new/attempts")
+    public ResponseEntity<?> getIsAttempts() {
+        return ResponseEntity.ok(attemptsResponse);
     }
 }

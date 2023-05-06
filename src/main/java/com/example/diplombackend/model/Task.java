@@ -40,6 +40,10 @@ public class Task {
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
     public Collection<UserTask> users;
 
+    @ManyToOne
+    @JoinColumn(name="book_id", nullable=false)
+    private Book book;
+
     @JsonIgnore
     public List<Description> getAllDescription() {
         ArrayList<Description> d = new ArrayList<>();
